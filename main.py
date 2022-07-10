@@ -12,6 +12,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
 
 from RemoteTypograf import RemoteTypograf
+from struct_text import struct_text_str
 
 load_dotenv()
 
@@ -36,8 +37,8 @@ logging.basicConfig(
 # Тут инициализация сервиса Типографа
 rt = RemoteTypograf()
 rt.htmlEntities()
-rt.br(1)
-rt.p(1)
+rt.br(0)
+rt.p(0)
 rt.nobr(3)
 
 
@@ -70,10 +71,13 @@ async def cmd_test(message: types.Message):
     try:
         result = get_typogred_text(message.text)
     except Exception:
-        result = 'Ошибка доступа к Типографу'
-        logging.error(result)
-
-    await message.answer(result)
+        error = 'Ошибка доступа к Типографу'
+        logging.error(error)
+        await message.answer(error)
+    else:
+        await message.answer(result)  # ответ Типографа
+        text = struct_text_str(result)
+        await message.answer(text)  # структурированный ответ
 
 
 if __name__ == "__main__":
